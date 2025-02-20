@@ -58,7 +58,7 @@ This project is inspired by the paper **"Efficient Logging in Non-Volatile Memor
    ```
 2. Compile the project:
    ```bash
-   g++ -std=c++17 -o LogStream main.cpp MemorySimulator.cpp CacheCoherency.cpp Logger.cpp PerformanceMetrics.cpp -pthread
+   mkdir build && cd build && cmake .. && make && MallocNanoZone=0 ./LogStream
    ```
 3. Run the executable:
    ```bash
