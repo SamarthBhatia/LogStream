@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <unordered_map>
+#include <mutex>
 
 enum class cacheState {MODIFIED, EXCLUSIVE, SHARED, INVALID};
 
@@ -15,6 +16,7 @@ class cacheCoherency{
 
     private:
         std::unordered_map<size_t,std::atomic<cacheState>> cacheStateMap;
+        std::mutex cacheMutex;
 };
 
 

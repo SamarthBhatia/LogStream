@@ -13,8 +13,9 @@ void simulateWorkload(Logger& logger, size_t startAddress, size_t endAddress) {
 }
 
 int main() {
-    const size_t NVM_SIZE = 1024 * 1024; // 1 MB NVM
-    const size_t DRAM_SIZE = 1024 * 1024; // 1 MB DRAM
+    const size_t NVM_SIZE = 256 * 1024; // 256 KB NVM
+    const size_t DRAM_SIZE = 256 * 1024; // 256 KB DRAM
+
     const size_t NUM_THREADS = 4;
     const size_t WORKLOAD_SIZE = NVM_SIZE / NUM_THREADS;
 
