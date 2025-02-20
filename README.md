@@ -1,7 +1,3 @@
-Great choice! **LogStream** is a sleek and modern name for your project. Here's a **beautiful and professional README file** tailored to your project name:
-
----
-
 # **LogStream**  
 **Efficient Logging in Non-Volatile Memory by Exploiting Cache Coherency Protocols**
 
