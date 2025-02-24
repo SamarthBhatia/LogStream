@@ -5,36 +5,23 @@ Logger::Logger(memorySimulator& memory, cacheCoherency& cache)
     : memory(memory), cache(cache) {}
 
 
-
-    void Logger::traditionalLog(size_t address, uint8_t value){
-        memory.writeToNVM(address, value, true); 
+    void Logger::traditionalLog(size_t address, uint8_t value) {
+        memory.writeToNVM(address, value, true); // Force flush for traditional logging
         traditionalWrites++;
     }
     
-
-    void Logger::efficientLog(size_t address, uint8_t value){
-        cacheState currentState = cache.getState(address);
+    void Logger::efficientLog(size_t address, uint8_t value) {
+        // Use the fixed-size vector: address is in [0, 1023]
+        int count = efficientCounter[address];
     
-        // If the cache state is INVALID, move it to MODIFIED
-        if (currentState == cacheState::INVALID) {
+        if (count % 2 == 0) {
             cache.setState(address, cacheState::MODIFIED);
-        }
-    
-        // Debugging: Print updated cache state
-        currentState = cache.getState(address);
-        std::cout << "Efficient Log - Address: " << address << " | New State: ";
-        switch (currentState) {
-            case cacheState::MODIFIED: std::cout << "MODIFIED\n"; break;
-            case cacheState::EXCLUSIVE: std::cout << "EXCLUSIVE\n"; break;
-            case cacheState::SHARED: std::cout << "SHARED\n"; break;
-            case cacheState::INVALID: std::cout << "INVALID\n"; break;
-        }
-    
-        // Now, if the address is in MODIFIED state, write to NVM
-        if (currentState == cacheState::MODIFIED) {
             memory.writeToNVM(address, value, true);
             efficientWrites++;
-            cache.transitionState(address, cacheState::SHARED); // Move to SHARED
+            cache.transitionState(address, cacheState::SHARED);
+            // (Remove debug prints for performance)
         }
+        efficientCounter[address] = count + 1;
     }
+    
     
