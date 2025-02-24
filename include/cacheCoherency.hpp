@@ -13,6 +13,8 @@ class cacheCoherency{
         cacheCoherency();
         cacheState getState(size_t address);
         void setState(size_t address, cacheState state);
+        void transitionState(size_t address, cacheState newState);
+
 
     private:
         std::unordered_map<size_t,std::atomic<cacheState>> cacheStateMap;

@@ -1,40 +1,54 @@
 #include <iostream>
-#include <thread>
-#include <vector>
-#include "./include/memorySimulator.hpp"
-#include "./include/cacheCoherency.hpp"
 #include "./include/logger.hpp"
 #include "./include/performanceMetrics.hpp"
-
-void simulateWorkload(Logger& logger, size_t startAddress, size_t endAddress) {
-    for (size_t i = startAddress; i < endAddress; i++) {
-        logger.efficientLog(i, i % 256); // Simulate efficient logging
-    }
-}
+#include "./include/memorySimulator.hpp"
 
 int main() {
-    const size_t NVM_SIZE = 256 * 1024; // 256 KB NVM
-    const size_t DRAM_SIZE = 256 * 1024; // 256 KB DRAM
-
-    const size_t NUM_THREADS = 4;
-    const size_t WORKLOAD_SIZE = NVM_SIZE / NUM_THREADS;
-
-    memorySimulator memory(NVM_SIZE, DRAM_SIZE);
+    size_t nvmSize = 1024 * 1024;  // Define NVM size
+    size_t dramSize = 1024 * 1024; // Define DRAM size
+    memorySimulator memory(nvmSize, dramSize);
     cacheCoherency cache;
     Logger logger(memory, cache);
-    PerformanceMetrics metrics;
+    PerformanceMetrics timer;
 
-    std::vector<std::thread> threads;
+    size_t logCount = 1000000;  // Number of log entries
 
-    metrics.startTimer();
-    for (size_t i = 0; i < NUM_THREADS; i++) {
-        threads.emplace_back(simulateWorkload, std::ref(logger), i * WORKLOAD_SIZE, (i + 1) * WORKLOAD_SIZE);
+    // === Traditional Logging ===
+    std::cout << "Starting Traditional Logging...\n";
+    timer.startTimer();
+    for (size_t i = 0; i < logCount; i++) {
+        size_t address = i % 1024; // Spread writes over 1024 addresses
+        logger.traditionalLog(address, static_cast<uint8_t>(i % 256));
+        if (i % 10000 == 0) {
+            std::cout << "Traditional Log - Address: " << address << " processed\n";
+        }
     }
-    for (auto& thread : threads) {
-        thread.join();
-    }
-    metrics.stopTimer();
+    timer.stopTimer();
+    double traditionalTime = timer.getElapsedTime();
+    size_t traditionalWrites = logger.getTraditionalWrites();
 
-    std::cout << "Elapsed Time: " << metrics.getElapsedTime() << " seconds" << std::endl;
+    // === Efficient Logging ===
+    std::cout << "\nStarting Efficient Logging...\n";
+    timer.startTimer();
+    for (size_t i = 0; i < logCount; i++) {
+        size_t address = i % 1024; // Spread writes over 1024 addresses
+        logger.efficientLog(address, static_cast<uint8_t>(i % 256));
+        if (i % 10000 == 0) {
+            std::cout << "Efficient Log - Address: " << address << " processed\n";
+        }
+    }
+    timer.stopTimer();
+    double efficientTime = timer.getElapsedTime();
+    size_t efficientWrites = logger.getEfficientWrites();
+
+    // === Final Output ===
+    std::cout << "\nTraditional Logging:\n";
+    std::cout << "- Elapsed Time: " << traditionalTime << " seconds\n";
+    std::cout << "- Writes to NVM: " << traditionalWrites << "\n";
+
+    std::cout << "\nEfficient Logging:\n";
+    std::cout << "- Elapsed Time: " << efficientTime << " seconds\n";
+    std::cout << "- Writes to NVM: " << efficientWrites << "\n";
+
     return 0;
 }

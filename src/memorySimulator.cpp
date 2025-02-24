@@ -1,5 +1,7 @@
 #include "../include/memorySimulator.hpp"
 #include <iostream>
+#include <atomic>
+
 memorySimulator::memorySimulator(size_t nvm_size, size_t dram_size) {
     try {
         nvm.resize(nvm_size, 0);
@@ -10,15 +12,19 @@ memorySimulator::memorySimulator(size_t nvm_size, size_t dram_size) {
     }
 }
 
-
-void memorySimulator::writeToNVM(size_t address, uint8_t value) {
-        if (address >= nvm.size()) {
-            std::cerr << "Error: NVM write out of bounds: " << address << std::endl;
-            return;
-        }
-        nvm[address] = value;
+void memorySimulator::writeToNVM(size_t address, uint8_t value, bool forceFlush) {
+    nvm[address] = value;
+    if (forceFlush) {
+        flushNVM(address);
     }
-    
+}
+
+
+
+void memorySimulator::flushNVM(size_t address) {
+    std::atomic_thread_fence(std::memory_order_release);
+}
+
 
 
 void memorySimulator::writeToDRAM(size_t address, uint8_t value) {
