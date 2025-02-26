@@ -20,7 +20,8 @@ class Logger{
         
         size_t traditionalWrites = 0;
         size_t efficientWrites = 0;
-        std::vector<int> efficientCounter = std::vector<int>(1024, 0);
+        // std::vector<int> efficientCounter = std::vector<int>(1024, 0);
+        std::vector<int> rripCounters;
 
 };
 
