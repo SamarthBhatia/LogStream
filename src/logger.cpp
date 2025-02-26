@@ -47,11 +47,11 @@ void Logger::efficientLog(size_t address, uint8_t value) {
         efficientWrites++;
         cache.transitionState(address, cacheState::SHARED);
         rrip = 0;  // Reset counter after flushing
-        std::cout << "Efficient Log - Address: " << address << " flushed (RRIP reached " << MAX_RRIP << ")\n";
+        
     } else {
         // Otherwise, update the memory without a forced flush and increment the counter.
         memory.writeToNVM(address, value, false);
-        std::cout << "Efficient Log - Address: " << address << " skipped flush (RRIP = " << rrip << ")\n";
+        
         rrip = std::min(rrip + 1, MAX_RRIP);
     }
 }
