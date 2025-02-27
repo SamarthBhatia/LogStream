@@ -58,7 +58,7 @@ This project is inspired by the paper **"Efficient Logging in Non-Volatile Memor
    ```
 2. Compile the project:
    ```bash
-   mkdir build && cd build && cmake .. && make && MallocNanoZone=0 ./LogStream
+   mkdir build && cd build && cmake .. && make && MallocNanoZone=0 
    ```
 3. Run the executable:
    ```bash
